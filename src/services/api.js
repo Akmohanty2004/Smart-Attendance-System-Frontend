@@ -1,6 +1,6 @@
-const PROD_API_BASE = 'https://smart-attendance-system-backend-ivory.vercel.app/api';
+const PROD_API_BASE = 'https://smart-attendance-system-backend-flax.vercel.app/api';
 
-// Uses VITE_API_BASE_URL if explicitly provided, otherwise defaults directly to live Vercel backend
+// Uses VITE_API_BASE_URL if explicitly provided, otherwise defaults directly to user's new live Vercel backend
 const API_BASE = (import.meta.env && import.meta.env.VITE_API_BASE_URL) 
   ? import.meta.env.VITE_API_BASE_URL 
   : PROD_API_BASE;
