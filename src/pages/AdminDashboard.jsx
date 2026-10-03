@@ -64,8 +64,14 @@ export default function AdminDashboard({ socket, networkStatus, onSettingsUpdate
         fetchStudents()
       ]);
 
-      if (statsRes.success) setStats(statsRes.stats);
-      if (dailyRes.success) setAttendanceRecords(dailyRes.records);
+      if (dailyRes.success) {
+        setAttendanceRecords(dailyRes.records);
+        if (dailyRes.stats) {
+          setStats(dailyRes.stats);
+        }
+      } else if (statsRes.success) {
+        setStats(statsRes.stats);
+      }
       if (studentsRes.success) setStudents(studentsRes.students);
     } catch (err) {
       console.error('Error loading admin dashboard:', err);
