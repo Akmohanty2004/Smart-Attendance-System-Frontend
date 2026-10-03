@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://smart-attendance-system-backend-ivory.vercel.app/api';
 
 export async function fetchNetworkStatus() {
   const res = await fetch(`${API_BASE}/system/network-status`);

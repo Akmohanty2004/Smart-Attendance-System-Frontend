@@ -8,7 +8,7 @@ import StudentDashboard from './pages/StudentDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import { fetchNetworkStatus } from './services/api';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://smart-attendance-system-backend-ivory.vercel.app';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('attendance');
@@ -100,7 +100,7 @@ export default function App() {
       <footer className="py-6 border-t border-slate-900 bg-slate-950 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>Smart Attendance System • AI Face Recognition & Institute Network Protocol</span>
-          <span className="font-mono text-[11px]">Smart Attendance AI</span>
+          <span className="font-mono text-[11px]">Backend API: https://smart-attendance-system-backend-ivory.vercel.app</span>
         </div>
       </footer>
     </div>
