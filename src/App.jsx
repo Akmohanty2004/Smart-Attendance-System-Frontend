@@ -8,21 +8,30 @@ import StudentDashboard from './pages/StudentDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import { fetchNetworkStatus } from './services/api';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://smart-attendance-system-backend-ivory.vercel.app';
+const PROD_SOCKET_URL = 'https://smart-attendance-system-backend-ivory.vercel.app';
+const SOCKET_URL = (import.meta.env && import.meta.env.VITE_SOCKET_URL) 
+  ? import.meta.env.VITE_SOCKET_URL 
+  : PROD_SOCKET_URL;
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('attendance');
   const [socket, setSocket] = useState(null);
   const [networkStatus, setNetworkStatus] = useState(null);
 
-  // Initialize Socket.io connection
+  // Initialize Socket.io connection with polling fallback for serverless backend
   useEffect(() => {
     const newSocket = io(SOCKET_URL, {
-      transports: ['websocket', 'polling']
+      transports: ['polling', 'websocket'],
+      reconnectionAttempts: 5,
+      timeout: 10000
     });
 
     newSocket.on('connect', () => {
       console.log('⚡ Connected to Socket.io server:', newSocket.id);
+    });
+
+    newSocket.on('connect_error', (err) => {
+      console.warn('Socket connection warning (using polling mode):', err.message);
     });
 
     newSocket.on('settings_updated', () => {

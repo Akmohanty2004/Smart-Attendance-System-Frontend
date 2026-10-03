@@ -1,7 +1,9 @@
-const LIVE_BACKEND_API = 'https://smart-attendance-system-backend-ivory.vercel.app/api';
+const PROD_API_BASE = 'https://smart-attendance-system-backend-ivory.vercel.app/api';
 
-// Dynamic API Base URL resolver: uses VITE_API_BASE_URL if specified, otherwise uses live Vercel backend
-const API_BASE = import.meta.env.VITE_API_BASE_URL || LIVE_BACKEND_API;
+// Uses VITE_API_BASE_URL if explicitly provided, otherwise defaults directly to live Vercel backend
+const API_BASE = (import.meta.env && import.meta.env.VITE_API_BASE_URL) 
+  ? import.meta.env.VITE_API_BASE_URL 
+  : PROD_API_BASE;
 
 export async function fetchNetworkStatus() {
   const res = await fetch(`${API_BASE}/system/network-status`);
