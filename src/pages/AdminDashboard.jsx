@@ -168,6 +168,28 @@ export default function AdminDashboard({ socket, networkStatus, onSettingsUpdate
     }
   };
 
+  const [isSavingIp, setIsSavingIp] = useState(false);
+  const [ipSaveSuccess, setIpSaveSuccess] = useState(false);
+
+  const handleSaveAllowedSubnets = async (e) => {
+    if (e) e.preventDefault();
+    setIsSavingIp(true);
+    setIpSaveSuccess(false);
+    try {
+      const ranges = allowedSubnets.split(',').map(s => s.trim()).filter(Boolean);
+      const res = await updateSystemSettings({ allowedIpRanges: ranges });
+      if (res.success) {
+        setIpSaveSuccess(true);
+        if (onSettingsUpdated) onSettingsUpdated();
+        setTimeout(() => setIpSaveSuccess(false), 3000);
+      }
+    } catch (err) {
+      console.error('Error saving IP ranges:', err);
+    } finally {
+      setIsSavingIp(false);
+    }
+  };
+
   const handleToggleDemoBypass = async () => {
     const nextVal = !demoBypassIp;
     setDemoBypassIp(nextVal);
@@ -651,15 +673,45 @@ export default function AdminDashboard({ socket, networkStatus, onSettingsUpdate
 
             {/* Allowed Subnets Config */}
             <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
-              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
-                Allowed Institute IP Subnet Ranges (Comma Separated)
-              </label>
-              <input
-                type="text"
-                value={allowedSubnets}
-                onChange={e => setAllowedSubnets(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-xs font-mono text-cyan-300 focus:outline-none focus:border-cyan-500"
-              />
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
+                  Allowed Institute IP Subnet Ranges (Comma Separated)
+                </label>
+                {ipSaveSuccess && (
+                  <span className="text-[11px] font-semibold text-emerald-400 flex items-center space-x-1 animate-in fade-in">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Saved to Database!</span>
+                  </span>
+                )}
+              </div>
+
+              <form onSubmit={handleSaveAllowedSubnets} className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="text"
+                  value={allowedSubnets}
+                  onChange={e => setAllowedSubnets(e.target.value)}
+                  placeholder="e.g. 192.168.0.0/24, 10.0.0.0/8, 127.0.0.1"
+                  className="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-xs font-mono text-cyan-300 focus:outline-none focus:border-cyan-500"
+                />
+                <button
+                  type="submit"
+                  disabled={isSavingIp}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white text-xs font-bold flex items-center justify-center space-x-1.5 transition-all shadow-lg shadow-cyan-500/20 disabled:opacity-50 shrink-0"
+                >
+                  {isSavingIp ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Shield className="w-3.5 h-3.5" />
+                      <span>Save IP Ranges</span>
+                    </>
+                  )}
+                </button>
+              </form>
+
               <p className="text-[11px] text-slate-400">
                 Example: <code className="text-cyan-400">192.168.0.0/24, 10.0.0.0/8, 127.0.0.1</code>
               </p>
