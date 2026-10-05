@@ -672,8 +672,34 @@ export default function AdminDashboard({ socket, networkStatus, onSettingsUpdate
             </div>
 
             {/* Allowed Subnets Config */}
-            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
-              <div className="flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
+              {/* Detected IP Display & 1-Click Allow Button */}
+              <div className="p-4 rounded-xl bg-slate-950/80 border border-cyan-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div>
+                  <span className="text-slate-400 text-xs">Your Current Detected Device IP:</span>
+                  <div className="font-mono text-cyan-300 font-bold text-sm mt-0.5">{networkStatus?.clientIp || 'Detecting...'}</div>
+                  <span className="text-[10px] text-slate-500">
+                    {networkStatus?.isAllowed ? '✅ Status: Connected to Allowed Network' : '❌ Status: Outside Allowed Network'}
+                  </span>
+                </div>
+                {networkStatus?.clientIp && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const currentList = allowedSubnets.split(',').map(s => s.trim()).filter(Boolean);
+                      if (!currentList.includes(networkStatus.clientIp)) {
+                        const updated = [...currentList, networkStatus.clientIp].join(', ');
+                        setAllowedSubnets(updated);
+                      }
+                    }}
+                    className="px-3.5 py-1.5 rounded-lg bg-cyan-950/80 border border-cyan-500/50 hover:bg-cyan-900 text-cyan-300 text-xs font-semibold flex items-center space-x-1.5 transition-all shadow shrink-0"
+                  >
+                    <span>+ Add My Device IP ({networkStatus.clientIp})</span>
+                  </button>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between pt-1">
                 <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
                   Allowed Institute IP Subnet Ranges (Comma Separated)
                 </label>
